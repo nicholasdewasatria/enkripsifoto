@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enkripsi dan Deskripsi Foto</title>
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .file-input {
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            text-align: center;
+        }
+
+        .action-buttons button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4285F4;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .action-buttons button:hover {
+            background-color: #3072f3;
+        }
+    </style>
+    <script>
+        function encryptFile() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                var result = reader.result;
+                var encryptedResult = encryptImage(result);
+                downloadFile(encryptedResult, 'encrypted_image.txt');
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function decryptFile() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                var result = reader.result;
+                var decryptedResult = decryptImage(result);
+                downloadFile(decryptedResult, 'decrypted_image.png');
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function encryptImage(imageData) {
+            var shift = 3; // Jumlah pergeseran karakter dalam Caesar Cipher
+            var encryptedData = '';
+
+            for (var i = 0; i < imageData.length; i++) {
+                var charCode = imageData.charCodeAt(i);
+
+                // Periksa apakah karakter adalah huruf
+                if (isLetter(charCode)) {
+                    var encryptedCharCode = (charCode - 65 + shift) % 26 + 65;
+                    encryptedData += String.fromCharCode(encryptedCharCode);
+                } else {
+                    encryptedData += imageData[i];
+                }
+            }
+
+            return encryptedData;
+        }
+
+        function decryptImage(imageData) {
+            var shift = 3; // Jumlah pergeseran karakter dalam Caesar Cipher
+            var decryptedData = '';
+
+            for (var i = 0; i < imageData.length; i++) {
+                var charCode = imageData.charCodeAt(i);
+
+                // Periksa apakah karakter adalah huruf
+                if (isLetter(charCode)) {
+                    var decryptedCharCode = (charCode - 65 - shift + 26) % 26 + 65;
+                    decryptedData += String.fromCharCode(decryptedCharCode);
+                } else {
+                    decryptedData += imageData[i];
+                }
+            }
+
+            return decryptedData;
+        }
+
+        function isLetter(charCode) {
+            return (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122);
+        }
+
+        function downloadFile(data, fileName) {
+            var link = document.createElement('a');
+            link.setAttribute('href', data);
+            link.setAttribute('download', fileName);
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Enkripsi dan Deskripsi Foto</h1>
+        <div class="file-input">
+            <input type="file" id="fileInput">
+        </div>
+        <div class="action-buttons">
+            <button onclick="encryptFile()">Enkripsi</button>
+            <button onclick="decryptFile()">Deskripsi</button>
+        </div>
+    </div>
+</body>
+</html>
